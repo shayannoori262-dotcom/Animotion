@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>تبدیل ویدیو به انیمیشن - AnimateVideo</title>
+ <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+ <style>
+ :root {
+ --primary-color: #6a11cb;
+ --secondary-color: #2575fc;
+ --accent-color: #ff6b6b;
+ --light-color: #f8f9fa;
+ --dark-color: #343a40;
+ --success-color: #28a745;
+ }
+ 
+ * {
+ margin: 0;
+ padding: 0;
+ box-sizing: border-box;
+ font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+ }
+ 
+ body {
+ background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+ color: var(--light-color);
+ line-height: 1.6;
+ min-height: 100vh;
+ padding: 20px;
+ }
+ 
+ .container {
+ width: 90%;
+ max-width: 1200px;
+ margin: 0 auto;
+ padding: 2rem;
+ background: rgba(255, 255, 255, 0.08);
+ border-radius: 20px;
+ box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+ }
+ 
+ header {
+ text-align: center;
+ padding: 2rem 0;
+ }
+ 
+ header h1 {
+ font-size: 2.8rem;
+ margin-bottom: 1rem;
+ background: linear-gradient(45deg, var(--light-color), var(--accent-color));
+ -webkit-background-clip: text;
+ background-clip: text;
+ color: transparent;
+ text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+ }
+ 
+ header p {
+ font-size: 1.2rem;
+ opacity: 0.9;
+ max-width: 800px;
+ margin: 0 auto;
+ }
+ 
+ .upload-section {
+ background-color: rgba(255, 255, 255, 0.1);
+ backdrop-filter: blur(10px);
+ border-radius: 15px;
+ padding: 2.5rem;
+ margin: 2.5rem 0;
+ text-align: center;
+ transition: all 0.3s ease;
+ }
+ 
+ .upload-section:hover {
+ transform: translateY(-5px);
+ box-shadow: 0 15px 25px rgba(0, 0, 0, 0.2);
+ }
+ 
+ .upload-area {
+ border: 3px dashed rgba(255, 255, 255, 0.3);
+ border-radius: 10px;
+ padding: 3rem;
+ margin: 1.5rem 0;
+ cursor: pointer;
+ transition: all 0.3s ease;
+ position: relative;
+ overflow: hidden;
+ }
+ 
+ .upload-area:hover {
+ border-color: var(--accent-color);
+ background-color: rgba(255, 255, 255, 0.05);
+ }
+ 
+ .upload-area i {
+ font-size: 4.5rem;
+ margin-bottom: 1.5rem;
+ color: var(--accent-color);
+ }
+ 
+ .upload-area p {
+ margin: 0.5rem 0;
+ font-size: 1.1rem;
+ }
+ 
+ .btn {
+ display: inline-block;
+ background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+ color: white;
+ padding: 1rem 2rem;
+ border: none;
+ border-radius: 50px;
+ cursor: pointer;
+ font-size: 1.1rem;
+ font-weight: bold;
+ transition: all 0.3s ease;
+ margin: 0.5rem;
+ box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+ }
+ 
+ .btn:hover {
+ transform: translateY(-3px);
+ box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+ }
+ 
+ .btn:active {
+ transform: translateY(1px);
+ }
+ 
+ .btn-success {
+ background: linear-gradient(45deg, var(--success-color), #20c997);
+ }
+ 
+ .options-panel {
+ background-color: rgba(255, 255, 255, 0.1);
+ backdrop-filter: blur(10px);
+ border-radius: 15px;
+ padding: 2.5rem;
+ margin: 2.5rem 0;
+ transition: all 0.3s ease;
+ }
+ 
+ .options-panel:hover {
+ transform: translateY(-5px);
+ box-shadow: 0 15px 25px rgba(0, 0, 0, 0.2);
+ }
+ 
+ .option-group {
+ margin-bottom: 2rem;
+ padding-bottom: 1.5rem;
+ border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+ }
+ 
+ .option-group:last-child {
+ border-bottom: none;
+ margin-bottom: 0;
+ padding-bottom: 0;
+ }
+ 
+ .option-group h3 {
+ margin-bottom: 1.2rem;
+ color: var(--accent-color);
+ font-size: 1.4rem;
+ display: flex;
+ align-items: center;
+ }
+ 
+ .option-group h3 i {
+ margin-left: 10px;
+ }
+ 
+ .style-options {
+ display: flex;
+ flex-wrap: wrap;
+ gap: 1rem;
+ justify-content: center;
+ }
+ 
+ .style-option {
+ flex: 1;
+ min-width: 150px;
+ text-align: center;
+ padding: 1.2rem;
+ border-radius: 10px;
+ background-color: rgba(255, 255, 255, 0.05);
+ cursor: pointer;
+ transition: all 0.3s ease;
+ }
+ 
+ .style-option:hover {
+ background-color: rgba(255, 107, 107, 0.2);
+ transform: translateY(-3px);
+ }
+ 
+ .style-option.active {
+ background-color: var(--accent-color);
+ transform: scale(1.05);
+ box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+ }
+ 
+ .language-select {
+ width: 100%;
+ padding: 1rem;
+ border-radius: 8px;
+ border: 2px solid rgba(255, 255, 255, 0.1);
+ background-color: rgba(255, 255, 255, 0.1);
+ color: white;
+ font-size: 1rem;
+ transition: all 0.3s ease;
+ }
+ 
+ .language-select:focus {
+ outline: none;
+ border-color: var(--accent-color);
+ background-color: rgba(255, 255, 255, 0.15);
+ }
+ 
+ .language-select option {
+ background-color: var(--dark-color);
+ padding: 10px;
+ }
+ 
+ .quality-options {
+ display: flex;
+ gap: 1rem;
+ }
+ 
+ .quality-option {
+ flex: 1;
+ text-align: center;
+ padding: 1rem;
+ border-radius: 8px;
+ background-color: rgba(255, 255, 255, 0.05);
+ cursor: pointer;
+ transition: all 0.3s ease;
+ }
+ 
+ .quality-option:hover {
+ background-color: rgba(37, 117, 252, 0.2);
+ transform: translateY(-3px);
+ }
+ 
+ .quality-option.active {
+ background-color: var(--secondary-color);
+ transform: scale(1.05);
+ box-shadow: 0 5px 15px rgba(37, 117, 252, 0.4);
+ }
+ 
+ .result-section {
+ text-align: center;
+ margin: 2.5rem 0;
+ background-color: rgba(255, 255, 255, 0.1);
+ backdrop-filter: blur(10px);
+ border-radius: 15px;
+ padding: 2.5rem;
+ transition: all 0.3s ease;
+ }
+ 
+ .result-section:hover {
+ transform: translateY(-5px);
+ box-shadow: 0 15px 25px rgba(0, 0, 0, 0.2);
+ }
+ 
+ .preview-container {
+ width: 100%;
+ max-width: 800px;
+ margin: 0 auto;
+ background: linear-gradient(45deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.4));
+ border-radius: 10px;
+ overflow: hidden;
+ position: relative;
+ }
+ 
+ .preview-placeholder {
+ padding: 5rem;
+ color: rgba(255, 255, 255, 0.7);
+ font-size: 1.2rem;
+ }
+ 
+ .progress-bar {
+ height: 6px;
+ width: 0;
+ background: linear-gradient(45deg, var(--accent-color), var(--secondary-color));
+ border-radius: 3px;
+ margin: 1.5rem auto;
+ max-width: 500px;
+ transition: width 0.3s ease;
+ }
+ 
+ footer {
+ text-align: center;
+ padding: 2rem 0;
+ margin-top: 2rem;
+ font-size: 0.9rem;
+ opacity: 0.7;
+ }
+ 
+ .file-info {
+ margin-top: 1rem;
+ padding: 1rem;
+ background-color: rgba(255, 255, 255, 0.05);
+ border-radius: 8px;
+ display: none;
+ }
+ 
+ @media (max-width: 768px) {
+ .container {
+ width: 95%;
+ padding: 1.5rem;
+ }
+ 
+ header h1 {
+ font-size: 2.2rem;
+ }
+ 
+ .style-options, .quality-options {
+ flex-direction: column;
+ }
+ 
+ .upload-area {
+ padding: 2rem;
+ }
+ 
+ .btn {
+ width: 100%;
+ margin: 0.5rem 0;
+ }
+ }
+ </style>
+</head>
+<body>
+ <div class="container">
+ <header>
+ <h1><i class="fas fa-film"></i> تبدیل ویدیو به انیمیشن</h1> <p>هر ویدیویی را با کیفیت بالا به انیمیشن در سبک‌های مختلف تبدیل کنید و به زبان مورد نظر خود صداگذاری کنید</p> </header>
+ 
+ <section class="upload-section">
+ <h2><i class="fas fa-cloud-upload-alt"></i> ویدیوی خود را آپلود کنید</h2>
+ <div class="upload-area" id="uploadArea">
+ <i class="fas fa-cloud-upload-alt"></i>
+ <p>برای آپلود ویدیو اینجا کلیک کنید یا فایل را بکشید و رها کنید</p>
+ <p class="format-info">فرمت‌های پشتیبانی شده: MP4, MOV, AVI, MKV, حداکثر حجم: 500MB</p>
+ </div>
+ <input type="file" id="fileInput" hidden accept="video/*">
+ <button class="btn" id="uploadBtn"><i class="fas fa-folder-open"></i> انتخاب ویدیو</button>
+ 
+ <div class="file-info" id="fileInfo">
+ <p><strong>نام فایل:</strong> <span id="fileName"></span></p>
+ <p><strong>حجم فایل:</strong> <span id="fileSize"></span></p>
+ <p><strong>نوع فایل:</strong> <span id="fileType"></span></p>
+ </div>
+ </section>
+ 
+ <section class="options-panel">
+ <div class="option-group">
+ <h3><i class="fas fa-paint-brush"></i> سبک انیمیشن</h3>
+ <div class="style-options">
+ <div class="style-option active">
+ <i class="fas fa-pencil-alt"></i>
+ <p>کارتونی</p>
+ </div>
+ <div class="style-option">
+ <i class="fas fa-moon"></i>
+ <p>سایه‌نما</p>
+ </div>
+ <div class="style-option">
+ <i class="fas fa-comment"></i>
+ <p>کمیک</p>
+ </div>
+ <div class="style-option">
+ <i class="fas fa-eye"></i>
+ <p>انیمه</p>
+ </div>
+ <div class="style-option">
+ <i class="fas fa-dragon"></i>
+ <p>فانتزی</p>
+ </div>
+ </div>
+ </div>
+ 
+ <div class="option-group">
+ <h3><i class="fas fa-language"></i> زبان خروجی</h3>
+ <select class="language-select" id="languageSelect">
+ <option value="persian">فارسی</option>
+ <option value="english">English</option>
+ <option value="arabic">العربية</option>
+ <option value="spanish">Español</option>
+ <option value="french">Français</option>
+ <option value="german">Deutsch</option>
+ <option value="chinese">中文</option>
+ <option value="japanese">日本語</option>
+ </select>
+ </div>
+ 
+ <div class="option-group">
+ <h3><i class="fas fa-tachometer-alt"></i> کیفیت خروجی</h3>
+ <div class="quality-options">
+ <div class="quality-option active">
+ <p>SD</p>
+ <small>480p</small>
+ </div>
+ <div class="quality-option">
+ <p>HD</p>
+ <small>720p</small>
+ </div>
+ <div class="quality-option">
+ <p>Full HD</p>
+ <small>1080p</small>
+ </div>
+ <div class="quality-option">
+ <p>4K</p>
+ <small>2160p</small>
+ </div>
+ </div>
+ </div>
+ 
+ <div class="option-group" style="text-align: center;">
+ <button class="btn btn-success" id="generateBtn"><i class="fas fa-magic"></i> تولید انیمیشن</button>
+ </div>
+ </section>
+ 
+ <section class="result-section">
+ <h2><i class="fas fa-play-circle"></i> پیش‌نمایش نتیجه</h2>
+ <div class="preview-container">
+ <div class="preview-placeholder" id="previewPlaceholder">
+ پس از تولید، انیمیشن در اینجا نمایش داده خواهد شد
+ </div>
+ </div>
+ 
+ <div class="progress-bar" id="progressBar"></div>
+ 
+ <button class="btn" id="downloadBtn" style="margin-top: 1.5rem;" disabled>
+ <i class="fas fa-download"></i> دانلود انیمیشن
+ </button>
+ </section>
+ 
+ <footer>
+ <p>کلیه حقوق محفوظ است © ۲۰۲۳ - AnimateVideo | قدرت گرفته از هوش مصنوعی</p>
+ </footer>
+ </div>
+
+ <script>
+ // مدیریت آپلود فایل
+ const uploadBtn = document.getElementById('uploadBtn');
+ const fileInput = document.getElementById('fileInput');
+ const uploadArea = document.getElementById('uploadArea');
+ const fileInfo = document.getElementById('fileInfo');
+ const fileName = document.getElementById('fileName');
+ const fileSize = document.getElementById('fileSize');
+ const fileType = document.getElementById('fileType');
+ 
+ uploadBtn.addEventListener('click', () => {
+ fileInput.click();
+ });
+ 
+ uploadArea.addEventListener('click', () => {
+ fileInput.click();
+ });
+ 
+ // مدیریت drag and drop
+ uploadArea.addEventListener('dragover', (e) => {
+ e.preventDefault();
+ uploadArea.style.borderColor = '#ff6b6b';
+ uploadArea.style.backgroundColor = 'rgba(255, 107, 107, 0.1)';
+ });
+ 
+ uploadArea.addEventListener('dragleave', () => {
+ uploadArea.style.borderColor = 'rgba(255, 255, 255, 0.3)';
+ uploadArea.style.backgroundColor = 'transparent';
+ });
+ 
+ uploadArea.addEventListener('drop', (e) => {
+ e.preventDefault();
+ uploadArea.style.borderColor = 'rgba(255, 255, 255, 0.3)';
+ uploadArea.style.backgroundColor = 'transparent';
+ 
+ if (e.dataTransfer.files.length) {
+ handleFile(e.dataTransfer.files[0]);
+ }
+ });
+ 
+ fileInput.addEventListener('change', (e) => {
+ if (e.target.files.length > 0) {
+ handleFile(e.target.files[0]);
+ }
+ });
+ 
+ function handleFile(file) {
+ // بررسی نوع فایل
+ if (!file.type.startsWith('video/')) {
+ alert('لطفاً یک فایل ویدیویی انتخاب کنید');
+ return;
+ }
+ 
+ // بررسی حجم فایل (حداکثر 500MB)
+ if (file.size > 500 * 1024 * 1024) {
+ alert('حجم فایل نباید بیشتر از 500 مگابایت باشد');
+ return;
+ }
+ 
+ // نمایش اطلاعات فایل
+ fileName.textContent = file.name;
+ fileSize.textContent = formatFileSize(file.size);
+ fileType.textContent = file.type.replace('video/', '').toUpperCase();
+ fileInfo.style.display = 'block';
+ 
+ // تغییر ظاهر منطقه آپلود
+ uploadArea.innerHTML = `
+ <i class="fas fa-check-circle" style="color: #28a745;"></i>
+ <p>فایل انتخاب شد:</p>
+ <p><strong>${file.name}</strong></p>
+ <p class="format-info">برای انتخاب فایل دیگری، اینجا کلیک کنید</p>
+ `;
+ }
+ 
+ function formatFileSize(bytes) {
+ if (bytes < 1024) return bytes + ' bytes';
+ else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+ else return (bytes / 1048576).toFixed(1) + ' MB';
+ }
+ 
+ // مدیریت انتخاب سبک
+ const styleOptions = document.querySelectorAll('.style-option');
+ styleOptions.forEach(option => {
+ option.addEventListener('click', () => {
+ styleOptions.forEach(opt => opt.classList.remove('active'));
+ option.classList.add('active');
+ });
+ });
+ 
+ // مدیریت انتخاب کیفیت
+ const qualityOptions = document.querySelectorAll('.quality-option');
+ qualityOptions.forEach(option => {
+ option.addEventListener('click', () => {
+ qualityOptions.forEach(opt => opt.classList.remove('active'));
+ option.classList.add('active');
+ });
+ });
+ 
+ // شبیه‌سازی فرآیند تولید
+ const generateBtn = document.getElementById('generateBtn');
+ const downloadBtn = document.getElementById('downloadBtn');
+ const previewPlaceholder = document.getElementById('previewPlaceholder');
+ const progressBar = document.getElementById('progressBar');
+ 
+ generateBtn.addEventListener('click', () => {
+ if (!fileInput.files.length) {
+ alert('لطفاً ابتدا یک ویدیو انتخاب کنید');
+ return;
+ }
+ 
+ // غیرفعال کردن دکمه تولید
+ generateBtn.disabled = true;
+ generateBtn.innerHTML = '<i class="fas fa-cog fa-spin"></i> در حال پردازش...';
+ 
+ // نمایش انیمیشن در حال پردازش
+ previewPlaceholder.innerHTML = '<i class="fas fa-cog fa-spin" style="font-size: 3rem; margin-bottom: 1rem;"></i><p>در حال پردازش ویدیو... لطفاً منتظر بمانید</p>';
+ 
+ // شروع پیشرفت
+ let width = 0;
+ const interval = setInterval(() => {
+ if (width >= 100) {
+ clearInterval(interval);
+ processComplete();
+ } else {
+ width += 5;
+ progressBar.style.width = width + '%';
+ }
+ }, 200);
+ });
+ 
+ function processComplete() {
+ previewPlaceholder.innerHTML = '<i class="fas fa-check-circle" style="color: #28a745; font-size: 3rem; margin-bottom: 1rem;"></i><p>انیمیشن شما آماده است!</p>';
+ downloadBtn.disabled = false;
+ 
+ // بازنشانی دکمه تولید
+ generateBtn.disabled = false;
+ generateBtn.innerHTML = '<i class="fas fa-magic"></i> تولید انیمیشن';
+ }
+ 
+ // مدیریت دانلود
+ downloadBtn.addEventListener('click', () => {
+ alert('در نسخه واقعی، فایل انیمیشن دانلود خواهد شد');
+ });
+ </script>
+</body>
+</html>
